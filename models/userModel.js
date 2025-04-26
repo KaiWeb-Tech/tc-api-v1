@@ -31,6 +31,13 @@ export class User {
             [nickname, email, hashedPassword, authProvider]
         );
 
+        if (result.insertId) {
+            await pool.query(
+                'INSERT INTO settings (user_id) VALUES (?)',
+                [result.insertId]
+            )
+        }
+
         return result.insertId;
     }
 
@@ -47,7 +54,7 @@ export class User {
 }
 
 function generateRandomPassword() {
-    return Math.random().toString(36).slice(-8); // Génère une chaîne aléatoire de 8 caractères
+    return Math.random().toString(36).slice(-8);
 }
 
 export default User
