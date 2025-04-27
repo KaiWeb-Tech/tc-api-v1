@@ -3,46 +3,53 @@ import User from "../models/userModel.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 
-dotenv.config({ path: '.env.local' });
+dotenv.config({path: '.env.local'});
 
 const authController = {
     register: async (req, res) => {
         try {
-            const { nickname, email, password } = req.body;
+            const {nickname, email, password} = req.body;
 
             const existingUser = await User.findByEmail(email);
             if (existingUser) {
-                return res.status(400).json({ message: 'This email is already in use' });
+                return res.status(400).json({message: 'This email is already in use'});
             }
 
             const userId = await User.createUser(nickname, email, password);
 
-            res.status(201).json({ message: 'User successfully created', userId });
+            res.status(201).json({message: 'User successfully created', userId});
         } catch (error) {
             console.error(error);
-            res.status(500).json({ message: 'Account creation error' });
+            res.status(500).json({message: 'Account creation error'});
         }
     },
 
     login: async (req, res) => {
         try {
-            const { email, password } = req.body;
+            const {email, password} = req.body;
 
             const user = await User.findByEmail(email);
             if (!user) {
-                return res.status(401).json({ message: 'Incorrect email or password' });
+                return res.status(401).json({message: 'Incorrect email or password'});
             }
 
             const isPasswordValid = await bcrypt.compare(password, user.password);
             if (!isPasswordValid) {
-                return res.status(401).json({ message: 'Incorrect email or password' });
+                return res.status(401).json({message: 'Incorrect email or password'});
             }
 
-            const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+            const token = jwt.sign({id: user.id}, process.env.JWT_SECRET, {
                 expiresIn: process.env.JWT_EXPIRES_IN
             });
 
             const userData = await User.findById(user.id);
+
+            res.cookie('jwt_token', token, {
+                httpOnly: true,
+                secure: true,
+                sameSite: 'strict',
+                maxAge: 3600000,
+            });
 
             res.json({
                 message: 'Successful connection',
@@ -51,7 +58,7 @@ const authController = {
             });
         } catch (error) {
             console.error(error);
-            res.status(500).json({ message: 'Connection error' });
+            res.status(500).json({message: 'Connection error'});
         }
     },
 
@@ -59,13 +66,44 @@ const authController = {
         try {
             const user = await User.findById(req.userId);
             if (!user) {
-                return res.status(404).json({ message: 'User not found' });
+                return res.status(404).json({message: 'User not found'});
             }
             res.json(user);
         } catch (error) {
             console.error(error);
-            res.status(500).json({ message: 'Error while retrieving profile' });
+            res.status(500).json({message: 'Error while retrieving profile'});
         }
+    },
+
+    updateProfile: async (req, res) => {
+        const {
+            nickname,
+            email,
+            password,
+            language
+        } = req.body;
+
+        try {
+            const user = await User.updateProfile(
+                req.userId, nickname, email, password, language
+            )
+            if (!user) {
+                return res.status(404).json({message: 'User not found'});
+            }
+            res.json(user);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({message: 'Error while updating profile'});
+        }
+    },
+
+    checkAuthentication: async (req, res) => {
+        // const token = req.cookies.jwt_token;
+        // if (token && validateJWT(token)) {
+        //     res.status(200).send('Authenticated');
+        // } else {
+        //     res.status(401).send('Unauthorized');
+        // }
     }
 };
 

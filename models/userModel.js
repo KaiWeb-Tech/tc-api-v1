@@ -41,14 +41,49 @@ export class User {
         return result.insertId;
     }
 
+    static async updateProfile(id, nickname, email, password, language) {
+        const userUpdates = [];
+        const userValues = [];
+
+        if (nickname) {
+            userUpdates.push('nickname = ?');
+            userValues.push(nickname);
+        }
+        if (email) {
+            userUpdates.push('email = ?');
+            userValues.push(email);
+        }
+        if (password) {
+            userUpdates.push('password = ?');
+            userValues.push(password);
+        }
+
+        if (userUpdates.length > 0) {
+            const userQuery = `UPDATE users SET ${userUpdates.join(', ')} WHERE id = ?`;
+            await pool.query(userQuery, [...userValues, id]);
+        }
+
+        // Mise à jour de la table settings
+        if (language) {
+            await pool.query(
+                'UPDATE settings SET language = ? WHERE user_id = ?',
+                [language, id]
+            );
+        }
+
+        return this.findById(id)
+    }
 
     static async findByEmail(email) {
-        const [rows] = await pool.query('SELECT * FROM users WHERE email = ?', [email]);
+        const [rows] = await pool.query(
+            'SELECT * FROM users WHERE email = ?', [email]
+        );
         return rows[0];
     }
 
     static async findById(id) {
-        const [rows] = await pool.query('SELECT id, nickname, email, avatar, auth_provider, roles, created_at, updated_at FROM users WHERE id = ?', [id]);
+        const [rows] = await pool.query(
+            'SELECT users.id, users.nickname, users.email, users.avatar, users.auth_provider, users.roles, settings.theme, settings.language, users.created_at, users.updated_at FROM users INNER JOIN settings ON users.id = settings.user_id WHERE id = ?', [id]);
         return rows[0];
     }
 }
