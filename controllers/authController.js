@@ -79,13 +79,12 @@ const authController = {
         const {
             nickname,
             email,
-            password,
             language
         } = req.body;
 
         try {
             const user = await User.updateProfile(
-                req.userId, nickname, email, password, language
+                req.userId, nickname, email, language
             )
             if (!user) {
                 return res.status(404).json({message: 'User not found'});
