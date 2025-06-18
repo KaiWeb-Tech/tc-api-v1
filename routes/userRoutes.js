@@ -8,3 +8,4 @@ router.put('/profile', authMiddleware.verifyToken, authController.updateProfile)
 router.post('/check', authMiddleware.verifyToken, authController.checkAuthentication)
 
 export default router
+

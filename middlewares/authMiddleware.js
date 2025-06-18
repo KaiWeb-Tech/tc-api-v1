@@ -19,7 +19,7 @@ const authMiddleware = {
             req.userId = decoded.id;
             next();
         });
-    }
+    },
 };
 
 export default authMiddleware

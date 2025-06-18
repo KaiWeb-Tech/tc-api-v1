@@ -59,7 +59,9 @@ export class User {
         }
 
         if (userUpdates.length > 0) {
-            const userQuery = `UPDATE users SET ${userUpdates.join(', ')} WHERE id = ?`;
+            const userQuery = `UPDATE users
+                               SET ${userUpdates.join(', ')}
+                               WHERE id = ?`;
             await pool.query(userQuery, [...userValues, id]);
         }
 

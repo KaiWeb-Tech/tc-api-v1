@@ -4,6 +4,7 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import authRoutes from './routes/authRoutes.js';
 import userRoutes from "./routes/userRoutes.js";
+import categoryRoutes from "./routes/categoryRoutes.js";
 
 dotenv.config({ path: '.env.local' });
 
@@ -25,6 +26,7 @@ app.use((req, res, next) => {
 const prefix = '/api/v1'
 app.use(`${prefix}/auth`, authRoutes);
 app.use(prefix, userRoutes)
+app.use(prefix, categoryRoutes)
 
 app.get('/', (req, res) => {
     res.send('API is running');
