@@ -32,7 +32,6 @@ const categoryController = {
     },
 
     getById: async (req, res) => {
-        console.log(req.params)
         try {
             const category = await Category.findById(req.params.id);
             if (!category) {
