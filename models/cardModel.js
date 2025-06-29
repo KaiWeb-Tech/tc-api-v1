@@ -5,16 +5,17 @@ import User from "./userModel.js";
 dotenv.config({path: '.env.local'});
 
 export class Card {
-    constructor(id, front_side, back_side, description, category_id) {
+    constructor(id, front_side, back_side, description, rating, category_id) {
         this.id = id;
         this.front_side = front_side;
         this.back_side = back_side;
         this.description = description;
         this.category_id = category_id;
+        this.rating = rating;
     }
 
     static fromJson(json) {
-        return new User(json.id, json.front_side, json.back_side, json.description, json.category_id);
+        return new User(json.id, json.front_side, json.back_side, json.description, json.rating, json.category_id);
     }
 
     static async createCard(front_side, back_side, description, category_id) {
@@ -26,7 +27,7 @@ export class Card {
         return this.findById(result.insertId);
     }
 
-    static async updateCard(id, front_side, back_side, description) {
+    static async updateCard(id, front_side, back_side, description, rating) {
         const cardUpdates = []
         const cardValues = []
 
@@ -41,6 +42,10 @@ export class Card {
         if (description) {
             cardUpdates.push('description = ?')
             cardValues.push(description)
+        }
+        if (rating) {
+            cardUpdates.push('rating = ?')
+            cardValues.push(rating)
         }
 
         if (cardUpdates.length > 0) {

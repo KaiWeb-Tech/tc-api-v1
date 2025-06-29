@@ -49,14 +49,14 @@ CREATE TABLE IF NOT EXISTS cat_tags
 
 CREATE TABLE IF NOT EXISTS card_tags
 (
-    card_id INT PRIMARY KEY,
-    name        VARCHAR(50) NOT NULL,
-    misc1       VARCHAR(255),
-    misc2       VARCHAR(255),
-    misc3       VARCHAR(255),
-    misc4       VARCHAR(255),
-    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    card_id    INT PRIMARY KEY,
+    name       VARCHAR(50) NOT NULL,
+    misc1      VARCHAR(255),
+    misc2      VARCHAR(255),
+    misc3      VARCHAR(255),
+    misc4      VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (card_id) REFERENCES cards (id) ON DELETE CASCADE
 );
 
@@ -79,15 +79,16 @@ CREATE TABLE IF NOT EXISTS categories
 CREATE TABLE IF NOT EXISTS cards
 (
     id          INT PRIMARY KEY AUTO_INCREMENT,
-    category_id INT  NOT NULL,
-    front_side  TEXT NOT NULL,
-    back_side   TEXT NOT NULL,
+    category_id INT     NOT NULL,
+    front_side  TEXT    NOT NULL,
+    back_side   TEXT    NOT NULL,
     description TEXT,
+    rating      NUMERIC NOT NULL DEFAULT 0,
     misc1       VARCHAR(255),
     misc2       VARCHAR(255),
     misc3       VARCHAR(255),
     misc4       VARCHAR(255),
-    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_at  TIMESTAMP        DEFAULT CURRENT_TIMESTAMP,
+    updated_at  TIMESTAMP        DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (category_id) REFERENCES categories (id) ON DELETE CASCADE
 );

@@ -12,9 +12,9 @@ const cardController = {
                 return res.status(404).json({message: 'Category not found'});
             }
 
-            const {front_side, back_side, description} = req.body;
+            const {front_side, back_side, description, rating} = req.body;
 
-            const card = await Card.createCard(front_side, back_side, description, category.id);
+            const card = await Card.createCard(front_side, back_side, description, rating, category.id);
 
             return res.status(200).json(card);
         } catch (error) {
@@ -65,12 +65,13 @@ const cardController = {
         const {
             front_side,
             back_side,
-            description
+            description,
+            rating
         } = req.body;
 
         try {
             getCategory(req, res).then(async (data) => {
-                const card = await Card.updateCard(req.params.id, front_side, back_side, description);
+                const card = await Card.updateCard(req.params.id, front_side, back_side, description, rating);
                 if (!card) {
                     return res.status(404).json({message: 'Card not found'});
                 }
