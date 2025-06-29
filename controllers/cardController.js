@@ -54,7 +54,7 @@ const cardController = {
                 return res.status(404).json({message: 'No card found'});
             }
 
-            return res.status(200).json({data: cards});
+            return res.status(200).json({data: cards.filter((card) => card.category_id === category.id)});
         } catch (error) {
             console.error(error);
             return res.status(500).json({message: 'Error while retrieving cards'});
